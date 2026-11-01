@@ -1,0 +1,156 @@
+<<<<<<< HEAD
+public class Customer implements Cloneable {
+    private String name;
+    private String email;
+    private String mobile;
+    private final String customerId;
+    private Address address;
+
+    private static long customerCounter = 100;
+
+    private static String generateCustomerId() {
+        customerCounter++;
+        return "CUST" + customerCounter;
+    }
+
+    public Customer(String name, String email, String mobile) {
+        this.name = name;
+        this.email = email;
+        this.mobile = mobile;
+        customerId = generateCustomerId();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Customer clone() {
+        try {
+            return (Customer) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
+    public static class Address {
+        private String line;
+        private String city;
+        private String pincode;
+
+        public Address(String line, String city, String pincode) {
+            this.line = line;
+            this.city = city;
+            this.pincode = pincode;
+        }
+
+        public String getLine() {
+            return line;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public String getPincode() {
+            return pincode;
+        }
+    }
+=======
+public class Customer implements Cloneable {
+    private String name;
+    private String email;
+    private String mobile;
+    private final String customerId;
+    private Address address;
+
+    private static long customerCounter = 100;
+
+    private static String generateCustomerId() {
+        customerCounter++;
+        return "CUST" + customerCounter;
+    }
+
+    public Customer(String name, String email, String mobile) {
+        this.name = name;
+        this.email = email;
+        this.mobile = mobile;
+        customerId = generateCustomerId();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Customer clone() {
+        try {
+            return (Customer) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
+    public static class Address {
+        private String line;
+        private String city;
+        private String pincode;
+
+        public Address(String line, String city, String pincode) {
+            this.line = line;
+            this.city = city;
+            this.pincode = pincode;
+        }
+
+        public String getLine() {
+            return line;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public String getPincode() {
+            return pincode;
+        }
+    }
+>>>>>>> 9bf9ae966cd62b73ad752a49c4372f8d7a3495c9
+}
