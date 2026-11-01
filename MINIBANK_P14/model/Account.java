@@ -1,0 +1,138 @@
+package model;
+
+import exception.BankException;
+import exception.InsufficientFundsException;
+import exception.InvalidAmountException;
+import model.annotation.Id;
+import java.io.Serializable;
+import java.util.Collection;
+
+public abstract class Account implements Transactable, InterestBearing, Serializable, Comparable<Account> {
+    private static final long serialVersionUID = 1L;
+    @Id
+    private final String accountNumber;
+    private String ownerName;
+    private long balance;
+    private boolean active;
+
+    private static int counter = 0;
+
+    /** Keeps generated account numbers unique after loading saved accounts. */
+    public static synchronized void updateCounterFrom(Account[] accounts) {
+        if (accounts == null) return;
+        for (Account account : accounts) {
+            if (account == null || account.accountNumber == null) continue;
+            String number = account.accountNumber;
+            if (number.startsWith("AC")) {
+                try { counter = Math.max(counter, Integer.parseInt(number.substring(2))); }
+                catch (NumberFormatException ignored) { }
+            }
+        }
+    }
+
+    public Account(String ownerName, long balance) {
+        counter++;
+        accountNumber = "AC" + String.format("%04d", counter);
+        this.ownerName = ownerName;
+        this.balance = balance;
+        active = true;
+    }
+
+    public Account(String ownerName) {
+        this(ownerName, 0);
+    }
+
+    public synchronized void deposit(long amount) throws InvalidAmountException {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be greater than zero");
+        }
+        balance = balance + amount;
+    }
+
+    public synchronized boolean withdraw(long amount)
+            throws InsufficientFundsException, InvalidAmountException {
+
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be greater than zero");
+        }
+
+        if (!canWithdraw(amount)) {
+            long shortfall = amount - balance;
+            if (shortfall < 0) {
+                shortfall = 0;
+            }
+            throw new InsufficientFundsException("Insufficient funds", shortfall);
+        }
+
+        balance = balance - amount;
+        return true;
+    }
+
+    public void transfer(Account to, long amount) throws BankException {
+        Account first = this;
+        Account second = to;
+
+        if (to == null) {
+            throw new BankException("Account not found");
+        }
+
+        if (this.getAccountNumber().compareTo(to.getAccountNumber()) > 0) {
+            first = to;
+            second = this;
+        }
+
+        synchronized (first) {
+            synchronized (second) {
+                this.withdraw(amount);
+                to.deposit(amount);
+            }
+        }
+    }
+
+    public abstract double interestRate();
+
+    public abstract boolean canWithdraw(long amount);
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public synchronized long getBalance() {
+        return balance;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public int compareTo(Account other) {
+        if (other == null) {
+            throw new NullPointerException("Cannot compare an account with null");
+        }
+        return this.accountNumber.compareTo(other.accountNumber);
+    }
+
+    @Override
+    public String toString() {
+        return accountNumber + " | " + ownerName + " | " + balance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Account) {
+            Account a = (Account) o;
+            return accountNumber.equals(a.accountNumber);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return accountNumber.hashCode();
+    }
+}

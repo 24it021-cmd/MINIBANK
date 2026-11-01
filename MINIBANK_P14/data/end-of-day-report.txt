@@ -1,0 +1,9 @@
+MINIBANK END-OF-DAY REPORT
+==========================
+Total deposits: 0
+Total withdrawals: 0
+Net transaction total (deposits - withdrawals): 0
+
+LOG FILE DETAILS
+----------------
+No log files found.
